@@ -35,24 +35,30 @@ void loop(){
 if(buttonPin == LOW && secondPress == false) //first button press!
    timerOne = millis();
    secondPress = true;
-   
+   pressTime = timerOne
 
 if(buttonPin == LOW && secondPress == true) { //second press!
     timerTwo = millis();
-    pressTime = timerTwo - timerOne;    //presstime now holds the total time between presses in milliseconds.
+    pressTime = (timerTwo - timerOne);    //presstime now holds the total time between presses in milliseconds.
     
-    //don't forget to reset!
-    timerOne = 0;
-    timerTwo = 0;
-    secondPress = false;
+
     
 
     if(pressTime <= 100);{
 functionGo;  // single press
+    timerOne = 0;
+    timerTwo = 0;
+    secondPress = false;
     }
+    
   if (pressTime > 300);{
     functionGo2;  // double press
+        timerOne = 0;
+    timerTwo = 0;
+    secondPress = false;
+  
   }
+  
   }
 }
 
