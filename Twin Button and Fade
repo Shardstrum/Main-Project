@@ -1,0 +1,140 @@
+#include <FastLED.h>
+#include "OneButton.h"
+
+#define LED_PIN 8                          // hardware SPI pin SCK
+#define NUM_LEDS 10
+#define COLOR_ORDER GRB
+#define LED_TYPE WS2813
+#define MAX_BRIGHTNESS 255                   // watch the power!
+
+struct CRGB leds[NUM_LEDS];
+
+#define BRIGHTNESS 255
+
+// Setup a new OneButton on pin A1.
+OneButton button1(3, true);
+// Setup a new OneButton on pin A2.
+OneButton button2(4, true);
+
+
+// setup code here, to run once:
+void setup() {
+
+  FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.setBrightness(BRIGHTNESS);
+  FastLED.show();
+
+  // Setup the Serial port. see http://arduino.cc/en/Serial/IfSerial
+  Serial.begin(115200);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
+  Serial.println("Starting TwoButtons...");
+
+  // link the button 1 functions.
+  button1.attachClick(click1);
+  button1.attachDoubleClick(doubleclick1);
+  button1.attachLongPressStart(longPressStart1);
+  button1.attachLongPressStop(longPressStop1);
+  button1.attachDuringLongPress(longPress1);
+
+  // link the button 2 functions.
+  button2.attachClick(click2);
+  button2.attachDoubleClick(doubleclick2);
+  button2.attachLongPressStart(longPressStart2);
+  button2.attachLongPressStop(longPressStop2);
+  button2.attachDuringLongPress(longPress2);
+
+} // setup
+
+
+// main code here, to run repeatedly:
+void loop() {
+  // keep watching the push buttons:
+  button1.tick();
+  button2.tick();
+
+}
+ 
+  }// loop()
+  // You can implement other code in here or just wait a while
+ // loop
+
+
+// ----- button 1 callback functions
+
+// This function will be called when the button1 was pressed 1 time (and no 2. button press followed).
+void click1() {
+  FastLED.clear();
+  leds[5] = CRGB::Red;
+  FastLED.show();
+} // click1
+
+
+// This function will be called when the button1 was pressed 2 times in a short timeframe.
+void doubleclick1(uint8_t trigger) {
+return true;
+  static uint16_t counte = 256;     // High count.
+
+  if (counte >255) Serial.println(0);
+
+    if (trigger) {counte=0;}
+    if (counte < 256) {
+      uint16_t breathing = cubicwave8(counte++);
+      breathing = breathing * breathing /500;                        // Optional multiplier to reduce the wave time.
+      fill_solid(leds, NUM_LEDS, CHSV(250, 250, breathing));
+      FastLED.show();
+    }
+} // triggered()
+
+// This function will be called once, when the button1 is pressed for a long time.
+void longPressStart1() {
+  FastLED.clear();
+  leds[5] = CRGB::Red;
+    leds[3] = CRGB::Red;
+      leds[5] = CRGB::Red;
+        leds[9] = CRGB::Red;
+        FastLED.show();
+} // longPressStart1
+
+
+// This function will be called often, while the button1 is pressed for a long time.
+void longPress1() {
+  Serial.println("Button 1 longPress...");
+} // longPress1
+
+
+// This function will be called once, when the button1 is released after beeing pressed for a long time.
+void longPressStop1() {
+  Serial.println("Button 1 longPress stop");
+} // longPressStop1
+
+
+// ... and the same for button 2:
+
+void click2() {
+      FastLED.setBrightness(ease8InOutCubic(ease8InOutCubic(beatsin8(5))));
+      FastLED.show();
+} // click2
+
+
+void doubleclick2() {
+  Serial.println("Button 2 doubleclick.");
+} // doubleclick2
+
+
+void longPressStart2() {
+  Serial.println("Button 2 longPress start");
+} // longPressStart2
+
+
+void longPress2() {
+  Serial.println("Button 2 longPress...");
+} // longPress2
+
+void longPressStop2() {
+  Serial.println("Button 2 longPress stop");
+} // longPressStop2
+
+
+// End
