@@ -73,7 +73,6 @@ void click1() {
 
 // This function will be called when the button1 was pressed 2 times in a short timeframe.
 void doubleclick1(uint8_t trigger) {
-return true;
   static uint16_t counte = 256;     // High count.
 
   if (counte >255) Serial.println(0);
